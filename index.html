@@ -1,1 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>짤·카드 스튜디오</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div>
+            <h1>🎨 짤·카드 스튜디오</h1>
+            <p>이미지와 문구를 조합해 나만의 카드를 만들어보세요.</p>
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <!-- 편집 영역 -->
+        <section class="editor-panel">
+
+            <h2>이미지 편집</h2>
+
+            <div class="upload-box">
+
+                <label for="imageInput" class="upload-button">
+                    🖼️ 이미지 선택
+                </label>
+
+                <input
+                    type="file"
+                    id="imageInput"
+                    accept="image/png, image/jpeg"
+                >
+
+                <p class="upload-help">
+                    PNG 또는 JPEG 파일만 사용할 수 있습니다.
+                </p>
+
+                <p id="fileMessage" class="message"></p>
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="textInput">문구</label>
+
+                <input
+                    type="text"
+                    id="textInput"
+                    value="오늘도 화이팅!"
+                    maxlength="100"
+                    placeholder="문구를 입력하세요"
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="fontSize">
+                    글자 크기
+                    <span id="fontSizeValue">32px</span>
+                </label>
+
+                <input
+                    type="range"
+                    id="fontSize"
+                    min="12"
+                    max="100"
+                    value="32"
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label for="textColor">글자 색상</label>
+
+                <input
+                    type="color"
+                    id="textColor"
+                    value="#ffffff"
+                >
+
+            </div>
+
+
+            <div class="control-group">
+
+                <label>문구 위치</label>
+
+                <div class="position-buttons">
+
+                    <button data-position="top">위</button>
+                    <button data-position="center">가운데</button>
+                    <button data-position="bottom">아래</button>
+
+                </div>
+
+            </div>
+
+
+            <button id="resetButton" class="reset-button">
+                ↻ 처음 상태로
+            </button>
+
+        </section>
+
+
+        <!-- 미리보기 영역 -->
+        <section class="preview-panel">
+
+            <div class="preview-header">
+
+                <div>
+                    <h2>미리보기</h2>
+                    <p>변경 사항이 즉시 반영됩니다.</p>
+                </div>
+
+            </div>
+
+
+            <div id="previewArea" class="preview-area">
+
+                <div id="emptyMessage" class="empty-message">
+                    <div class="empty-icon">🖼️</div>
+                    <p>이미지를 선택해주세요.</p>
+                </div>
+
+
+                <img
+                    id="previewImage"
+                    class="preview-image"
+                    alt="미리보기 이미지"
+                >
+
+
+                <div
+                    id="previewText"
+                    class="preview-text"
+                >
+                    오늘도 화이팅!
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>짤·카드 스튜디오 · Card 1</p>
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
