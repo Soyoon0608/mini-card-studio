@@ -103,6 +103,11 @@ imageInput.addEventListener(
         ];
 
 
+        /*
+            잘못된 파일을 선택해도
+            기존 편집 상태를 삭제하지 않는다.
+        */
+
         if (!allowedTypes.includes(file.type)) {
 
             fileMessage.textContent =
@@ -132,6 +137,11 @@ imageInput.addEventListener(
                 image.onload =
                     function () {
 
+                        /*
+                            이미지 로딩이 성공한 경우에만
+                            현재 이미지를 교체한다.
+                        */
+
                         currentImage =
                             image;
 
@@ -149,6 +159,15 @@ imageInput.addEventListener(
 
                         fileMessage.textContent =
                             "이미지를 불러왔습니다.";
+
+                    };
+
+
+                image.onerror =
+                    function () {
+
+                        fileMessage.textContent =
+                            "이미지를 불러올 수 없습니다.";
 
                     };
 
@@ -181,6 +200,11 @@ imageInput.addEventListener(
 textInput.addEventListener(
     "input",
     function () {
+
+        /*
+            textContent를 사용하여
+            HTML 태그가 실행되지 않도록 한다.
+        */
 
         previewText.textContent =
             this.value;
@@ -456,8 +480,6 @@ downloadButton.addEventListener(
 
         /*
             이미지 그리기
-            미리보기와 동일하게
-            화면을 꽉 채우고 가운데를 기준으로 잘라낸다.
         */
 
         drawCoverImage(
@@ -469,23 +491,15 @@ downloadButton.addEventListener(
 
 
         /*
-            문구 설정
-        */
-
-        const size =
-            Number(fontSize.value);
-
-
-        /*
-            미리보기의 글자 크기는
-            화면 크기에 맞춰 비례 계산
+            미리보기의 글자 크기와
+            Canvas 글자 크기를 비례시킨다.
         */
 
         const previewWidth =
             previewArea.clientWidth;
 
 
-        const previewFontSize =
+        const computedFontSize =
             Number(
                 getComputedStyle(
                     previewText
@@ -493,16 +507,22 @@ downloadButton.addEventListener(
             );
 
 
+        /*
+            previewWidth가 0인 경우를 방지
+        */
+
         const scale =
-            canvasWidth / previewWidth;
+            previewWidth > 0
+                ? canvasWidth / previewWidth
+                : 1;
 
 
         const canvasFontSize =
-            previewFontSize * scale;
+            computedFontSize * scale;
 
 
         ctx.font =
-            `bold ${canvasFontSize}px Arial, "Noto Sans KR", sans-serif`;
+            `bold ${canvasFontSize}px Arial, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif`;
 
         ctx.fillStyle =
             textColor.value;
@@ -521,22 +541,52 @@ downloadButton.addEventListener(
         ctx.shadowColor =
             "rgba(0, 0, 0, 0.8)";
 
-        ctx.shadowBlur = 4;
+        ctx.shadowBlur =
+            4;
 
-        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetX =
+            2;
 
-        ctx.shadowOffsetY = 2;
+        ctx.shadowOffsetY =
+            2;
 
 
         /*
-            문구 줄바꿈
+            문구
         */
 
         const text =
             textInput.value;
 
+
+        /*
+            빈 문구라면
+            이미지 자체만 저장한다.
+        */
+
+        if (text.trim() === "") {
+
+            saveCanvasAsPNG(
+                canvas
+            );
+
+            return;
+
+        }
+
+
+        /*
+            최대 문구 폭
+        */
+
         const maxWidth =
             canvasWidth * 0.9;
+
+
+        /*
+            긴 문장 / 줄바꿈 / 한글 /
+            영문 / 이모지를 처리한다.
+        */
 
         const lines =
             wrapText(
@@ -546,8 +596,13 @@ downloadButton.addEventListener(
             );
 
 
+        /*
+            줄 높이
+        */
+
         const lineHeight =
             canvasFontSize * 1.2;
+
 
         const totalHeight =
             lines.length * lineHeight;
@@ -609,57 +664,85 @@ downloadButton.addEventListener(
             PNG 저장
         */
 
-        canvas.toBlob(
-            function (blob) {
-
-                if (!blob) {
-
-                    fileMessage.textContent =
-                        "파일 저장에 실패했습니다.";
-
-                    return;
-
-                }
-
-
-                const url =
-                    URL.createObjectURL(blob);
-
-
-                const link =
-                    document.createElement("a");
-
-
-                link.href =
-                    url;
-
-                link.download =
-                    `card-${currentRatio.replace(":", "x")}.png`;
-
-
-                document.body.appendChild(
-                    link
-                );
-
-                link.click();
-
-                link.remove();
-
-
-                URL.revokeObjectURL(
-                    url
-                );
-
-
-                fileMessage.textContent =
-                    `${currentRatio} PNG 파일을 저장했습니다.`;
-
-            },
-            "image/png"
+        saveCanvasAsPNG(
+            canvas
         );
 
     }
 );
+
+
+/*
+    Canvas PNG 저장 함수
+*/
+
+function saveCanvasAsPNG(canvas) {
+
+    canvas.toBlob(
+        function (blob) {
+
+            if (!blob) {
+
+                fileMessage.textContent =
+                    "파일 저장에 실패했습니다.";
+
+                return;
+
+            }
+
+
+            const url =
+                URL.createObjectURL(blob);
+
+
+            const link =
+                document.createElement("a");
+
+
+            link.href =
+                url;
+
+
+            link.download =
+                `card-${currentRatio.replace(":", "x")}.png`;
+
+
+            document.body.appendChild(
+                link
+            );
+
+
+            link.click();
+
+
+            link.remove();
+
+
+            /*
+                다운로드가 시작된 후
+                Object URL을 정리한다.
+            */
+
+            setTimeout(
+                function () {
+
+                    URL.revokeObjectURL(
+                        url
+                    );
+
+                },
+                100
+            );
+
+
+            fileMessage.textContent =
+                `${currentRatio} PNG 파일을 저장했습니다.`;
+
+        },
+        "image/png"
+    );
+
+}
 
 
 /*
@@ -702,7 +785,8 @@ function drawCoverImage(
         offsetX =
             (canvasWidth - drawWidth) / 2;
 
-        offsetY = 0;
+        offsetY =
+            0;
 
     } else {
 
@@ -716,7 +800,8 @@ function drawCoverImage(
         drawHeight =
             drawWidth / imageRatio;
 
-        offsetX = 0;
+        offsetX =
+            0;
 
         offsetY =
             (canvasHeight - drawHeight) / 2;
@@ -737,6 +822,17 @@ function drawCoverImage(
 
 /*
     문구 줄바꿈
+    ================================
+
+    처리하는 입력
+
+    1. 긴 한글
+    2. 긴 영문
+    3. 한글 + 영문
+    4. 직접 입력한 줄바꿈
+    5. 이모지
+    6. 공백 없는 긴 문자열
+    7. 빈 줄
 */
 
 function wrapText(
@@ -745,8 +841,195 @@ function wrapText(
     maxWidth
 ) {
 
-    const words =
-        text.split(" ");
+    /*
+        빈 문자열
+    */
+
+    if (!text) {
+
+        return [""];
+
+    }
+
+
+    /*
+        실제 사용자가 입력한
+        줄바꿈을 먼저 유지한다.
+    */
+
+    const paragraphs =
+        text.split(/\r?\n/);
+
+
+    const lines = [];
+
+
+    paragraphs.forEach(
+        function (paragraph) {
+
+            /*
+                빈 줄 유지
+            */
+
+            if (paragraph === "") {
+
+                lines.push("");
+
+                return;
+
+            }
+
+
+            /*
+                일반적인 공백 기준 분리
+            */
+
+            const words =
+                paragraph.split(/\s+/);
+
+
+            let currentLine = "";
+
+
+            words.forEach(
+                function (word) {
+
+                    if (!word) {
+                        return;
+                    }
+
+
+                    const testLine =
+                        currentLine
+                            ? currentLine + " " + word
+                            : word;
+
+
+                    /*
+                        현재 줄이
+                        최대 폭을 넘는 경우
+                    */
+
+                    if (
+                        ctx.measureText(
+                            testLine
+                        ).width > maxWidth
+                    ) {
+
+                        /*
+                            현재 줄에 내용이 있으면
+                            먼저 저장한다.
+                        */
+
+                        if (currentLine) {
+
+                            lines.push(
+                                currentLine
+                            );
+
+                            currentLine =
+                                "";
+
+                        }
+
+
+                        /*
+                            단어 자체가 너무 긴 경우
+                            글자 단위로 다시 나눈다.
+                        */
+
+                        if (
+                            ctx.measureText(
+                                word
+                            ).width > maxWidth
+                        ) {
+
+                            const splitLines =
+                                splitLongText(
+                                    ctx,
+                                    word,
+                                    maxWidth
+                                );
+
+
+                            /*
+                                마지막 조각은
+                                다음 단어와 이어질 수 있도록
+                                currentLine에 둔다.
+                            */
+
+                            for (
+                                let i = 0;
+                                i < splitLines.length - 1;
+                                i++
+                            ) {
+
+                                lines.push(
+                                    splitLines[i]
+                                );
+
+                            }
+
+
+                            currentLine =
+                                splitLines[
+                                    splitLines.length - 1
+                                ];
+
+                        } else {
+
+                            currentLine =
+                                word;
+
+                        }
+
+                    } else {
+
+                        currentLine =
+                            testLine;
+
+                    }
+
+                }
+            );
+
+
+            /*
+                마지막 줄 저장
+            */
+
+            if (currentLine) {
+
+                lines.push(
+                    currentLine
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+        아무것도 생성되지 않은 경우
+    */
+
+    return lines.length
+        ? lines
+        : [""];
+}
+
+
+/*
+    공백 없는 긴 문자열을
+    글자 단위로 분리
+*/
+
+function splitLongText(
+    ctx,
+    text,
+    maxWidth
+) {
 
     const lines = [];
 
@@ -754,99 +1037,46 @@ function wrapText(
 
 
     /*
-        공백이 없는 한국어 문장도
-        적절히 줄바꿈되도록 처리
+        Array.from을 사용하여
+        이모지 같은 유니코드 문자도
+        가능한 한 하나의 단위로 처리한다.
     */
 
-    if (
-        words.length === 1 &&
-        ctx.measureText(text).width > maxWidth
-    ) {
-
-        let line = "";
+    const characters =
+        Array.from(text);
 
 
-        for (
-            let i = 0;
-            i < text.length;
-            i++
-        ) {
+    characters.forEach(
+        function (character) {
 
             const testLine =
-                line + text[i];
+                currentLine +
+                character;
 
 
             if (
                 ctx.measureText(
                     testLine
-                ).width > maxWidth
+                ).width > maxWidth &&
+                currentLine
             ) {
 
-                lines.push(line);
+                lines.push(
+                    currentLine
+                );
 
-                line =
-                    text[i];
+                currentLine =
+                    character;
 
             } else {
 
-                line =
+                currentLine =
                     testLine;
 
             }
 
         }
-
-
-        if (line) {
-
-            lines.push(line);
-
-        }
-
-
-        return lines;
-
-    }
-
-
-    for (
-        let i = 0;
-        i < words.length;
-        i++
-    ) {
-
-        const testLine =
-            currentLine
-                ? currentLine + " " + words[i]
-                : words[i];
-
-
-        const width =
-            ctx.measureText(
-                testLine
-            ).width;
-
-
-        if (
-            width > maxWidth &&
-            currentLine
-        ) {
-
-            lines.push(
-                currentLine
-            );
-
-            currentLine =
-                words[i];
-
-        } else {
-
-            currentLine =
-                testLine;
-
-        }
-
-    }
+    );
 
 
     if (currentLine) {
@@ -858,8 +1088,9 @@ function wrapText(
     }
 
 
-    return lines;
-
+    return lines.length
+        ? lines
+        : [""];
 }
 
 
