@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,28 +10,44 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
+
 <body>
 
 <header class="header">
+
     <div>
         <h1>🎨 짤·카드 스튜디오</h1>
-        <p>이미지와 문구를 조합해 나만의 카드를 만들어보세요.</p>
+
+        <p>
+            이미지와 문구를 조합해 나만의 카드를 만들어보세요.
+        </p>
     </div>
+
 </header>
 
 
 <main class="container">
 
+
     <!-- 편집 영역 -->
+
     <section class="editor-panel">
 
         <h2>이미지 편집</h2>
 
+
+        <!-- 이미지 업로드 -->
+
         <div class="upload-box">
 
-            <label for="imageInput" class="upload-button">
+            <label
+                for="imageInput"
+                class="upload-button">
+
                 🖼️ 이미지 선택
+
             </label>
+
 
             <input
                 type="file"
@@ -38,19 +55,29 @@
                 accept="image/png, image/jpeg"
             >
 
+
             <p class="upload-help">
                 PNG 또는 JPEG 파일만 사용할 수 있습니다.
             </p>
 
-            <p id="fileMessage" class="message"></p>
+
+            <p
+                id="fileMessage"
+                class="message">
+            </p>
 
         </div>
 
 
+
         <!-- 화면비 -->
+
         <div class="control-group">
 
-            <label>화면비</label>
+            <label>
+                화면비
+            </label>
+
 
             <div class="ratio-buttons">
 
@@ -58,21 +85,29 @@
                     type="button"
                     class="ratio-button active"
                     data-ratio="1:1">
+
                     1:1
+
                 </button>
+
 
                 <button
                     type="button"
                     class="ratio-button"
                     data-ratio="4:5">
+
                     4:5
+
                 </button>
+
 
                 <button
                     type="button"
                     class="ratio-button"
                     data-ratio="9:16">
+
                     9:16
+
                 </button>
 
             </div>
@@ -80,29 +115,40 @@
         </div>
 
 
+
         <!-- 문구 -->
+
         <div class="control-group">
 
-            <label for="textInput">문구</label>
+            <label for="textInput">
+                문구
+            </label>
 
-            <input
-                type="text"
+
+            <textarea
                 id="textInput"
-                value="오늘도 화이팅!"
                 maxlength="100"
                 placeholder="문구를 입력하세요"
-            >
+                rows="4">오늘도 화이팅!</textarea>
 
         </div>
 
 
+
         <!-- 글자 크기 -->
+
         <div class="control-group">
 
             <label for="fontSize">
+
                 글자 크기
-                <span id="fontSizeValue">32px</span>
+
+                <span id="fontSizeValue">
+                    32px
+                </span>
+
             </label>
+
 
             <input
                 type="range"
@@ -115,10 +161,15 @@
         </div>
 
 
+
         <!-- 글자 색상 -->
+
         <div class="control-group">
 
-            <label for="textColor">글자 색상</label>
+            <label for="textColor">
+                글자 색상
+            </label>
+
 
             <input
                 type="color"
@@ -129,26 +180,43 @@
         </div>
 
 
+
         <!-- 문구 위치 -->
+
         <div class="control-group">
 
-            <label>문구 위치</label>
+            <label>
+                문구 위치
+            </label>
+
 
             <div class="position-buttons">
 
-                <button type="button" data-position="top">
+                <button
+                    type="button"
+                    data-position="top">
+
                     위
+
                 </button>
 
-                <button type="button" data-position="center">
+
+                <button
+                    type="button"
+                    data-position="center">
+
                     가운데
+
                 </button>
+
 
                 <button
                     type="button"
                     class="active"
                     data-position="bottom">
+
                     아래
+
                 </button>
 
             </div>
@@ -156,54 +224,135 @@
         </div>
 
 
+
+        <!-- 템플릿 -->
+
+        <div class="template-box">
+
+            <h2>
+                📁 템플릿 관리
+            </h2>
+
+
+            <input
+                type="text"
+                id="templateName"
+                class="template-name-input"
+                maxlength="30"
+                placeholder="템플릿 이름"
+            >
+
+
+            <button
+                type="button"
+                id="saveTemplateButton"
+                class="template-save-button">
+
+                💾 새 템플릿 저장
+
+            </button>
+
+
+            <p
+                id="templateMessage"
+                class="template-message">
+            </p>
+
+
+            <div
+                id="templateList"
+                class="template-list">
+
+                <p class="template-empty">
+                    저장된 템플릿이 없습니다.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
         <!-- 다운로드 -->
+
         <button
             id="downloadButton"
             class="download-button"
             type="button">
+
             ⬇️ PNG 다운로드
+
         </button>
 
 
+
         <!-- 초기화 -->
+
         <button
             id="resetButton"
             class="reset-button"
             type="button">
+
             ↻ 처음 상태로
+
         </button>
 
     </section>
 
 
+
     <!-- 미리보기 영역 -->
+
     <section class="preview-panel">
+
 
         <div class="preview-header">
 
             <div>
-                <h2>미리보기</h2>
-                <p>변경 사항이 즉시 반영됩니다.</p>
+
+                <h2>
+                    미리보기
+                </h2>
+
+
+                <p>
+                    변경 사항이 즉시 반영됩니다.
+                </p>
+
             </div>
 
-            <span id="ratioLabel" class="ratio-label">
+
+            <span
+                id="ratioLabel"
+                class="ratio-label">
+
                 1:1
+
             </span>
 
         </div>
 
 
-        <div id="previewArea" class="preview-area">
 
-            <div id="emptyMessage" class="empty-message">
+        <div
+            id="previewArea"
+            class="preview-area">
+
+
+            <div
+                id="emptyMessage"
+                class="empty-message">
 
                 <div class="empty-icon">
                     🖼️
                 </div>
 
-                <p>이미지를 선택해주세요.</p>
+                <p>
+                    이미지를 선택해주세요.
+                </p>
 
             </div>
+
 
 
             <img
@@ -216,7 +365,9 @@
             <div
                 id="previewText"
                 class="preview-text">
+
                 오늘도 화이팅!
+
             </div>
 
         </div>
@@ -226,12 +377,19 @@
 </main>
 
 
+
 <footer>
-    <p>짤·카드 스튜디오 · Card 2</p>
+
+    <p>
+        짤·카드 스튜디오 · Card 4
+    </p>
+
 </footer>
+
 
 
 <script src="script.js"></script>
 
 </body>
+
 </html>
