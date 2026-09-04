@@ -13,6 +13,7 @@ body {
 
     background: #f5f6fa;
     color: #222;
+
     min-height: 100vh;
 }
 
@@ -21,58 +22,78 @@ body {
 
 .header {
     background: white;
-    border-bottom: 1px solid #e5e7eb;
+
+    border-bottom:
+        1px solid #e5e7eb;
+
     padding: 28px 20px;
 }
 
+
 .header h1 {
     font-size: 28px;
+
     margin-bottom: 8px;
 }
+
 
 .header p {
     color: #666;
 }
 
 
+
 /* 전체 */
 
 .container {
     width: min(1200px, 92%);
+
     margin: 35px auto;
 
     display: grid;
-    grid-template-columns: 360px 1fr;
+
+    grid-template-columns:
+        360px 1fr;
 
     gap: 30px;
 }
+
 
 
 /* 패널 */
 
 .editor-panel,
 .preview-panel {
+
     background: white;
 
-    border: 1px solid #e5e7eb;
+    border:
+        1px solid #e5e7eb;
+
     border-radius: 18px;
 
     padding: 25px;
 
     box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.05);
+        0 8px 25px
+        rgba(0, 0, 0, 0.05);
 }
+
 
 .editor-panel h2,
 .preview-panel h2 {
+
     margin-bottom: 20px;
 }
+
 
 
 /* 업로드 */
 
 .upload-box {
-    border: 2px dashed #cfd3dc;
+
+    border:
+        2px dashed #cfd3dc;
 
     border-radius: 14px;
 
@@ -83,12 +104,16 @@ body {
     margin-bottom: 25px;
 }
 
+
 .upload-button {
+
     display: inline-block;
 
-    padding: 12px 18px;
+    padding:
+        12px 18px;
 
     background: #222;
+
     color: white;
 
     border-radius: 10px;
@@ -98,22 +123,29 @@ body {
     font-weight: bold;
 }
 
+
 .upload-button:hover {
     opacity: 0.85;
 }
+
 
 #imageInput {
     display: none;
 }
 
+
 .upload-help {
+
     font-size: 13px;
+
     color: #777;
 
     margin-top: 12px;
 }
 
+
 .message {
+
     margin-top: 12px;
 
     font-size: 14px;
@@ -122,43 +154,61 @@ body {
 }
 
 
+
 /* 입력 */
 
 .control-group {
     margin-bottom: 24px;
 }
 
+
 .control-group label {
+
     display: flex;
-    justify-content: space-between;
+
+    justify-content:
+        space-between;
 
     font-weight: bold;
 
     margin-bottom: 9px;
 }
 
-.control-group input[type="text"] {
+
+.control-group input[type="text"],
+.control-group textarea {
+
     width: 100%;
 
     padding: 12px;
 
-    border: 1px solid #d5d8df;
+    border:
+        1px solid #d5d8df;
 
     border-radius: 9px;
 
     font-size: 15px;
 
+    font-family: inherit;
+
     outline: none;
+
+    resize: vertical;
 }
 
-.control-group input[type="text"]:focus {
+
+.control-group input[type="text"]:focus,
+.control-group textarea:focus {
+
     border-color: #555;
 }
+
 
 
 /* 화면비 */
 
 .ratio-buttons {
+
     display: grid;
 
     grid-template-columns:
@@ -167,8 +217,11 @@ body {
     gap: 8px;
 }
 
+
 .ratio-button {
-    border: 1px solid #d5d8df;
+
+    border:
+        1px solid #d5d8df;
 
     background: white;
 
@@ -181,14 +234,19 @@ body {
     font-weight: bold;
 }
 
+
 .ratio-button:hover {
     background: #f1f2f5;
 }
 
+
 .ratio-button.active {
+
     background: #222;
+
     color: white;
 }
+
 
 
 /* 슬라이더 */
@@ -198,10 +256,13 @@ input[type="range"] {
 }
 
 
+
 /* 색상 */
 
 input[type="color"] {
+
     width: 70px;
+
     height: 42px;
 
     border: none;
@@ -212,9 +273,11 @@ input[type="color"] {
 }
 
 
+
 /* 위치 */
 
 .position-buttons {
+
     display: grid;
 
     grid-template-columns:
@@ -223,8 +286,11 @@ input[type="color"] {
     gap: 8px;
 }
 
+
 .position-buttons button {
-    border: 1px solid #d5d8df;
+
+    border:
+        1px solid #d5d8df;
 
     background: white;
 
@@ -235,19 +301,213 @@ input[type="color"] {
     cursor: pointer;
 }
 
+
 .position-buttons button:hover {
     background: #f1f2f5;
 }
 
+
 .position-buttons button.active {
+
     background: #222;
+
     color: white;
 }
+
+
+
+/* =========================
+   템플릿
+========================= */
+
+.template-box {
+
+    border-top:
+        1px solid #e5e7eb;
+
+    padding-top: 24px;
+
+    margin-top: 8px;
+
+    margin-bottom: 24px;
+}
+
+
+.template-box h2 {
+
+    font-size: 18px;
+
+    margin-bottom: 15px;
+}
+
+
+.template-name-input {
+
+    width: 100%;
+
+    padding: 11px 12px;
+
+    border:
+        1px solid #d5d8df;
+
+    border-radius: 9px;
+
+    font-size: 14px;
+
+    outline: none;
+
+    margin-bottom: 8px;
+}
+
+
+.template-name-input:focus {
+
+    border-color: #555;
+}
+
+
+.template-save-button {
+
+    width: 100%;
+
+    padding: 11px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #222;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+
+.template-save-button:hover {
+    opacity: 0.85;
+}
+
+
+.template-message {
+
+    min-height: 20px;
+
+    margin-top: 9px;
+
+    font-size: 13px;
+
+    color: #555;
+}
+
+
+.template-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+
+.template-empty {
+
+    padding: 15px;
+
+    border-radius: 9px;
+
+    background: #f5f6fa;
+
+    color: #888;
+
+    text-align: center;
+
+    font-size: 13px;
+}
+
+
+.template-item {
+
+    border:
+        1px solid #e1e4e9;
+
+    border-radius: 10px;
+
+    padding: 12px;
+
+    background: #fafafa;
+}
+
+
+.template-item-name {
+
+    font-weight: bold;
+
+    margin-bottom: 8px;
+
+    word-break: break-word;
+}
+
+
+.template-item-actions {
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr 1fr;
+
+    gap: 5px;
+}
+
+
+.template-item-actions button {
+
+    border: none;
+
+    padding: 7px 4px;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+
+.template-load-button {
+
+    background: #222;
+
+    color: white;
+}
+
+
+.template-edit-button {
+
+    background: #e5e7eb;
+
+    color: #222;
+}
+
+
+.template-delete-button {
+
+    background: #f3d6d6;
+
+    color: #8b2222;
+}
+
 
 
 /* 다운로드 */
 
 .download-button {
+
     width: 100%;
 
     padding: 13px;
@@ -257,24 +517,29 @@ input[type="color"] {
     border-radius: 10px;
 
     background: #222;
+
     color: white;
 
     cursor: pointer;
 
     font-size: 15px;
+
     font-weight: bold;
 
     margin-bottom: 10px;
 }
+
 
 .download-button:hover {
     opacity: 0.85;
 }
 
 
+
 /* 초기화 */
 
 .reset-button {
+
     width: 100%;
 
     padding: 12px;
@@ -290,33 +555,43 @@ input[type="color"] {
     font-size: 15px;
 }
 
+
 .reset-button:hover {
     background: #ddd;
 }
 
 
+
 /* 미리보기 */
 
 .preview-header {
+
     display: flex;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
-    align-items: flex-start;
+    align-items:
+        flex-start;
 
     margin-bottom: 20px;
 }
 
+
 .preview-header p {
+
     color: #777;
 
     font-size: 14px;
 }
 
+
 .ratio-label {
+
     background: #eeeeee;
 
-    padding: 7px 12px;
+    padding:
+        7px 12px;
 
     border-radius: 20px;
 
@@ -326,11 +601,11 @@ input[type="color"] {
 }
 
 
-/*
-    실제 미리보기 영역
-*/
+
+/* 실제 미리보기 */
 
 .preview-area {
+
     position: relative;
 
     width: 100%;
@@ -355,30 +630,26 @@ input[type="color"] {
 }
 
 
-/* 1:1 */
-
 .preview-area.ratio-1-1 {
     aspect-ratio: 1 / 1;
 }
 
-
-/* 4:5 */
 
 .preview-area.ratio-4-5 {
     aspect-ratio: 4 / 5;
 }
 
 
-/* 9:16 */
-
 .preview-area.ratio-9-16 {
     aspect-ratio: 9 / 16;
 }
 
 
+
 /* 이미지 */
 
 .preview-image {
+
     display: none;
 
     position: absolute;
@@ -386,15 +657,18 @@ input[type="color"] {
     inset: 0;
 
     width: 100%;
+
     height: 100%;
 
     object-fit: cover;
 }
 
 
+
 /* 문구 */
 
 .preview-text {
+
     display: none;
 
     position: absolute;
@@ -403,59 +677,75 @@ input[type="color"] {
 
     width: 90%;
 
-    transform: translateX(-50%);
+    transform:
+        translateX(-50%);
 
     text-align: center;
 
     font-weight: bold;
 
     text-shadow:
-        2px 2px 4px rgba(0, 0, 0, 0.8);
+        2px 2px 4px
+        rgba(0, 0, 0, 0.8);
 
     word-break: break-word;
 
     overflow-wrap: break-word;
 
+    white-space: pre-wrap;
+
     pointer-events: none;
 }
+
 
 
 /* 문구 위치 */
 
 .preview-text.position-top {
+
     top: 8%;
 }
 
+
 .preview-text.position-center {
+
     top: 50%;
 
     transform:
         translate(-50%, -50%);
 }
 
+
 .preview-text.position-bottom {
+
     bottom: 8%;
 }
+
 
 
 /* 이미지 없을 때 */
 
 .empty-message {
+
     text-align: center;
 
     color: #888;
 }
 
+
 .empty-icon {
+
     font-size: 50px;
 
     margin-bottom: 10px;
 }
 
 
+
 /* 푸터 */
 
 footer {
+
     text-align: center;
 
     padding: 30px;
@@ -466,15 +756,19 @@ footer {
 }
 
 
+
 /* 모바일 */
 
 @media (max-width: 800px) {
 
     .container {
+
         grid-template-columns: 1fr;
     }
 
+
     .preview-area {
+
         max-width: 500px;
     }
 
@@ -484,17 +778,22 @@ footer {
 @media (max-width: 500px) {
 
     .header h1 {
+
         font-size: 23px;
     }
 
+
     .container {
+
         width: 94%;
 
         margin: 20px auto;
     }
 
+
     .editor-panel,
     .preview-panel {
+
         padding: 18px;
     }
 
