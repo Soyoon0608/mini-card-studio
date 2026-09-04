@@ -1,3 +1,9 @@
+/*
+    ================================
+    DOM 요소
+    ================================
+*/
+
 const imageInput =
     document.getElementById("imageInput");
 
@@ -49,18 +55,66 @@ const ratioButtons =
 
 
 /*
-    현재 편집 상태
+    템플릿 요소
 */
 
-let currentPosition = "bottom";
+const templateName =
+    document.getElementById(
+        "templateName"
+    );
 
-let currentRatio = "1:1";
+const saveTemplateButton =
+    document.getElementById(
+        "saveTemplateButton"
+    );
 
-let currentImage = null;
+const templateMessage =
+    document.getElementById(
+        "templateMessage"
+    );
+
+const templateList =
+    document.getElementById(
+        "templateList"
+    );
 
 
 /*
+    ================================
+    현재 편집 상태
+    ================================
+*/
+
+let currentPosition =
+    "bottom";
+
+let currentRatio =
+    "1:1";
+
+let currentImage =
+    null;
+
+
+/*
+    현재 수정 중인 템플릿 ID
+*/
+
+let editingTemplateId =
+    null;
+
+
+/*
+    localStorage 저장 이름
+*/
+
+const TEMPLATE_STORAGE_KEY =
+    "miniCardStudioTemplates";
+
+
+/*
+    ================================
     초기 설정
+    ================================
 */
 
 previewText.textContent =
@@ -76,9 +130,13 @@ setPosition("bottom");
 
 setRatio("1:1");
 
+renderTemplates();
+
 
 /*
+    ================================
     이미지 업로드
+    ================================
 */
 
 imageInput.addEventListener(
@@ -88,14 +146,11 @@ imageInput.addEventListener(
         const file =
             this.files[0];
 
+
         if (!file) {
             return;
         }
 
-
-        /*
-            PNG / JPEG만 허용
-        */
 
         const allowedTypes = [
             "image/png",
@@ -105,10 +160,14 @@ imageInput.addEventListener(
 
         /*
             잘못된 파일을 선택해도
-            기존 편집 상태를 삭제하지 않는다.
+            기존 이미지와 편집 상태는 유지한다.
         */
 
-        if (!allowedTypes.includes(file.type)) {
+        if (
+            !allowedTypes.includes(
+                file.type
+            )
+        ) {
 
             fileMessage.textContent =
                 "지원하지 않는 파일입니다. PNG 또는 JPEG만 사용할 수 있습니다.";
@@ -118,10 +177,6 @@ imageInput.addEventListener(
             return;
         }
 
-
-        /*
-            이미지 읽기
-        */
 
         const reader =
             new FileReader();
@@ -136,11 +191,6 @@ imageInput.addEventListener(
 
                 image.onload =
                     function () {
-
-                        /*
-                            이미지 로딩이 성공한 경우에만
-                            현재 이미지를 교체한다.
-                        */
 
                         currentImage =
                             image;
@@ -194,17 +244,14 @@ imageInput.addEventListener(
 
 
 /*
+    ================================
     문구 변경
+    ================================
 */
 
 textInput.addEventListener(
     "input",
     function () {
-
-        /*
-            textContent를 사용하여
-            HTML 태그가 실행되지 않도록 한다.
-        */
 
         previewText.textContent =
             this.value;
@@ -214,7 +261,9 @@ textInput.addEventListener(
 
 
 /*
+    ================================
     글자 크기 변경
+    ================================
 */
 
 fontSize.addEventListener(
@@ -224,8 +273,10 @@ fontSize.addEventListener(
         const size =
             Number(this.value);
 
+
         previewText.style.fontSize =
             size + "px";
+
 
         fontSizeValue.textContent =
             size + "px";
@@ -235,7 +286,9 @@ fontSize.addEventListener(
 
 
 /*
+    ================================
     글자 색상 변경
+    ================================
 */
 
 textColor.addEventListener(
@@ -250,7 +303,9 @@ textColor.addEventListener(
 
 
 /*
+    ================================
     위치 버튼
+    ================================
 */
 
 positionButtons.forEach(
@@ -273,7 +328,9 @@ positionButtons.forEach(
 
 
 /*
+    ================================
     화면비 버튼
+    ================================
 */
 
 ratioButtons.forEach(
@@ -296,7 +353,9 @@ ratioButtons.forEach(
 
 
 /*
+    ================================
     위치 변경
+    ================================
 */
 
 function setPosition(position) {
@@ -346,7 +405,9 @@ function setPosition(position) {
 
 
 /*
+    ================================
     화면비 변경
+    ================================
 */
 
 function setRatio(ratio) {
@@ -370,6 +431,7 @@ function setRatio(ratio) {
 
     }
 
+
     if (ratio === "4:5") {
 
         previewArea.classList.add(
@@ -377,6 +439,7 @@ function setRatio(ratio) {
         );
 
     }
+
 
     if (ratio === "9:16") {
 
@@ -420,7 +483,813 @@ function setRatio(ratio) {
 
 
 /*
+    ================================
+    템플릿 데이터 가져오기
+    ================================
+*/
+
+function getTemplates() {
+
+    const saved =
+        localStorage.getItem(
+            TEMPLATE_STORAGE_KEY
+        );
+
+
+    if (!saved) {
+
+        return [];
+
+    }
+
+
+    try {
+
+        const templates =
+            JSON.parse(saved);
+
+
+        if (
+            !Array.isArray(
+                templates
+            )
+        ) {
+
+            return [];
+
+        }
+
+
+        return templates;
+
+    } catch (error) {
+
+        console.error(
+            "템플릿 데이터를 읽을 수 없습니다.",
+            error
+        );
+
+        return [];
+
+    }
+
+}
+
+
+/*
+    ================================
+    템플릿 저장
+    ================================
+*/
+
+function saveTemplates(
+    templates
+) {
+
+    localStorage.setItem(
+        TEMPLATE_STORAGE_KEY,
+        JSON.stringify(templates)
+    );
+
+}
+
+
+/*
+    ================================
+    안정적인 ID 생성
+    ================================
+*/
+
+function createTemplateId() {
+
+    return (
+        "template-" +
+        Date.now() +
+        "-" +
+        Math.random()
+            .toString(36)
+            .substring(2, 9)
+    );
+
+}
+
+
+/*
+    ================================
+    현재 편집값 가져오기
+    ================================
+*/
+
+function getCurrentTemplateData(
+    name,
+    id
+) {
+
+    return {
+
+        id:
+            id || createTemplateId(),
+
+        name:
+            name,
+
+        text:
+            textInput.value,
+
+        fontSize:
+            Number(
+                fontSize.value
+            ),
+
+        textColor:
+            textColor.value,
+
+        position:
+            currentPosition,
+
+        ratio:
+            currentRatio
+
+    };
+
+}
+
+
+/*
+    ================================
+    새 템플릿 저장 / 수정
+    ================================
+*/
+
+saveTemplateButton.addEventListener(
+    "click",
+    function () {
+
+        const name =
+            templateName.value.trim();
+
+
+        /*
+            이름 검사
+        */
+
+        if (!name) {
+
+            templateMessage.textContent =
+                "템플릿 이름을 입력해주세요.";
+
+            templateName.focus();
+
+            return;
+
+        }
+
+
+        const templates =
+            getTemplates();
+
+
+        /*
+            수정 모드
+        */
+
+        if (editingTemplateId) {
+
+            const index =
+                templates.findIndex(
+                    function (template) {
+
+                        return (
+                            template.id ===
+                            editingTemplateId
+                        );
+
+                    }
+                );
+
+
+            /*
+                ID가 실제로 존재할 때만 수정
+            */
+
+            if (index !== -1) {
+
+                const existingTemplate =
+                    templates[index];
+
+
+                templates[index] =
+                    getCurrentTemplateData(
+                        name,
+                        existingTemplate.id
+                    );
+
+
+                saveTemplates(
+                    templates
+                );
+
+
+                templateMessage.textContent =
+                    "템플릿을 수정했습니다.";
+
+
+                editingTemplateId =
+                    null;
+
+
+                templateName.value =
+                    "";
+
+
+                saveTemplateButton.textContent =
+                    "💾 새 템플릿 저장";
+
+
+                renderTemplates();
+
+                return;
+
+            }
+
+
+            /*
+                ID가 없어졌다면
+                안전하게 새 템플릿으로 저장
+            */
+
+            editingTemplateId =
+                null;
+
+        }
+
+
+        /*
+            새 템플릿 생성
+        */
+
+        const newTemplate =
+            getCurrentTemplateData(
+                name
+            );
+
+
+        templates.push(
+            newTemplate
+        );
+
+
+        saveTemplates(
+            templates
+        );
+
+
+        templateMessage.textContent =
+            "새 템플릿을 저장했습니다.";
+
+
+        templateName.value =
+            "";
+
+
+        renderTemplates();
+
+    }
+);
+
+
+/*
+    ================================
+    템플릿 목록 다시 그리기
+    ================================
+*/
+
+function renderTemplates() {
+
+    const templates =
+        getTemplates();
+
+
+    templateList.innerHTML =
+        "";
+
+
+    /*
+        저장된 템플릿이 없는 경우
+    */
+
+    if (
+        templates.length === 0
+    ) {
+
+        const empty =
+            document.createElement(
+                "p"
+            );
+
+
+        empty.className =
+            "template-empty";
+
+
+        empty.textContent =
+            "저장된 템플릿이 없습니다.";
+
+
+        templateList.appendChild(
+            empty
+        );
+
+
+        return;
+
+    }
+
+
+    /*
+        저장된 템플릿을
+        ID 기준으로 다시 그린다.
+    */
+
+    templates.forEach(
+        function (template) {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "template-item";
+
+
+            /*
+                템플릿 이름
+            */
+
+            const name =
+                document.createElement(
+                    "div"
+                );
+
+
+            name.className =
+                "template-item-name";
+
+
+            name.textContent =
+                template.name;
+
+
+            /*
+                버튼 영역
+            */
+
+            const actions =
+                document.createElement(
+                    "div"
+                );
+
+
+            actions.className =
+                "template-item-actions";
+
+
+            /*
+                불러오기
+            */
+
+            const loadButton =
+                document.createElement(
+                    "button"
+                );
+
+
+            loadButton.type =
+                "button";
+
+
+            loadButton.className =
+                "template-load-button";
+
+
+            loadButton.textContent =
+                "불러오기";
+
+
+            loadButton.addEventListener(
+                "click",
+                function () {
+
+                    loadTemplate(
+                        template.id
+                    );
+
+                }
+            );
+
+
+            /*
+                수정
+            */
+
+            const editButton =
+                document.createElement(
+                    "button"
+                );
+
+
+            editButton.type =
+                "button";
+
+
+            editButton.className =
+                "template-edit-button";
+
+
+            editButton.textContent =
+                "수정";
+
+
+            editButton.addEventListener(
+                "click",
+                function () {
+
+                    editTemplate(
+                        template.id
+                    );
+
+                }
+            );
+
+
+            /*
+                삭제
+            */
+
+            const deleteButton =
+                document.createElement(
+                    "button"
+                );
+
+
+            deleteButton.type =
+                "button";
+
+
+            deleteButton.className =
+                "template-delete-button";
+
+
+            deleteButton.textContent =
+                "삭제";
+
+
+            deleteButton.addEventListener(
+                "click",
+                function () {
+
+                    deleteTemplate(
+                        template.id
+                    );
+
+                }
+            );
+
+
+            actions.appendChild(
+                loadButton
+            );
+
+
+            actions.appendChild(
+                editButton
+            );
+
+
+            actions.appendChild(
+                deleteButton
+            );
+
+
+            item.appendChild(
+                name
+            );
+
+
+            item.appendChild(
+                actions
+            );
+
+
+            templateList.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/*
+    ================================
+    템플릿 불러오기
+    ================================
+*/
+
+function loadTemplate(
+    templateId
+) {
+
+    const templates =
+        getTemplates();
+
+
+    /*
+        배열 위치가 아니라
+        고유 ID로 찾는다.
+    */
+
+    const template =
+        templates.find(
+            function (item) {
+
+                return (
+                    item.id ===
+                    templateId
+                );
+
+            }
+        );
+
+
+    if (!template) {
+
+        templateMessage.textContent =
+            "템플릿을 찾을 수 없습니다.";
+
+        return;
+
+    }
+
+
+    /*
+        저장된 값을
+        편집 화면에 적용
+    */
+
+    textInput.value =
+        template.text;
+
+
+    previewText.textContent =
+        template.text;
+
+
+    fontSize.value =
+        template.fontSize;
+
+
+    fontSizeValue.textContent =
+        template.fontSize +
+        "px";
+
+
+    previewText.style.fontSize =
+        template.fontSize +
+        "px";
+
+
+    textColor.value =
+        template.textColor;
+
+
+    previewText.style.color =
+        template.textColor;
+
+
+    setPosition(
+        template.position
+    );
+
+
+    setRatio(
+        template.ratio
+    );
+
+
+    templateMessage.textContent =
+        `"${template.name}" 템플릿을 불러왔습니다.`;
+
+}
+
+
+/*
+    ================================
+    템플릿 수정 모드
+    ================================
+*/
+
+function editTemplate(
+    templateId
+) {
+
+    const templates =
+        getTemplates();
+
+
+    /*
+        ID로 수정할 템플릿 검색
+    */
+
+    const template =
+        templates.find(
+            function (item) {
+
+                return (
+                    item.id ===
+                    templateId
+                );
+
+            }
+        );
+
+
+    if (!template) {
+
+        templateMessage.textContent =
+            "수정할 템플릿을 찾을 수 없습니다.";
+
+        return;
+
+    }
+
+
+    /*
+        먼저 템플릿을 편집 화면으로 불러온다.
+    */
+
+    loadTemplate(
+        templateId
+    );
+
+
+    /*
+        수정할 ID를 기억한다.
+    */
+
+    editingTemplateId =
+        templateId;
+
+
+    /*
+        이름도 수정할 수 있도록
+        이름 입력창에 기존 이름을 넣는다.
+    */
+
+    templateName.value =
+        template.name;
+
+
+    saveTemplateButton.textContent =
+        "✏️ 템플릿 수정 저장";
+
+
+    templateMessage.textContent =
+        `"${template.name}" 템플릿 수정 중입니다.`;
+
+
+
+    /*
+        이름 입력창으로 이동
+    */
+
+    templateName.focus();
+
+}
+
+
+/*
+    ================================
+    템플릿 삭제
+    ================================
+*/
+
+function deleteTemplate(
+    templateId
+) {
+
+    const templates =
+        getTemplates();
+
+
+    /*
+        삭제 대상 확인
+    */
+
+    const target =
+        templates.find(
+            function (template) {
+
+                return (
+                    template.id ===
+                    templateId
+                );
+
+            }
+        );
+
+
+    if (!target) {
+
+        templateMessage.textContent =
+            "삭제할 템플릿을 찾을 수 없습니다.";
+
+        return;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            `"${target.name}" 템플릿을 삭제하시겠습니까?`
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    /*
+        ID가 같은 템플릿만 제거한다.
+    */
+
+    const updatedTemplates =
+        templates.filter(
+            function (template) {
+
+                return (
+                    template.id !==
+                    templateId
+                );
+
+            }
+        );
+
+
+    saveTemplates(
+        updatedTemplates
+    );
+
+
+    /*
+        삭제하려던 템플릿을
+        현재 수정 중이었다면
+        수정 모드도 종료한다.
+    */
+
+    if (
+        editingTemplateId ===
+        templateId
+    ) {
+
+        editingTemplateId =
+            null;
+
+
+        templateName.value =
+            "";
+
+
+        saveTemplateButton.textContent =
+            "💾 새 템플릿 저장";
+
+    }
+
+
+    templateMessage.textContent =
+        `"${target.name}" 템플릿을 삭제했습니다.`;
+
+
+    /*
+        저장된 데이터 기준으로
+        화면을 다시 그린다.
+    */
+
+    renderTemplates();
+
+}
+
+
+/*
+    ================================
     PNG 다운로드
+    ================================
 */
 
 downloadButton.addEventListener(
@@ -437,20 +1306,22 @@ downloadButton.addEventListener(
         }
 
 
-        /*
-            저장할 Canvas 크기
-        */
-
         let canvasWidth;
         let canvasHeight;
 
 
-        if (currentRatio === "1:1") {
+        if (
+            currentRatio ===
+            "1:1"
+        ) {
 
             canvasWidth = 1080;
             canvasHeight = 1080;
 
-        } else if (currentRatio === "4:5") {
+        } else if (
+            currentRatio ===
+            "4:5"
+        ) {
 
             canvasWidth = 1080;
             canvasHeight = 1350;
@@ -464,23 +1335,24 @@ downloadButton.addEventListener(
 
 
         const canvas =
-            document.createElement("canvas");
+            document.createElement(
+                "canvas"
+            );
 
 
         canvas.width =
             canvasWidth;
+
 
         canvas.height =
             canvasHeight;
 
 
         const ctx =
-            canvas.getContext("2d");
+            canvas.getContext(
+                "2d"
+            );
 
-
-        /*
-            이미지 그리기
-        */
 
         drawCoverImage(
             ctx,
@@ -490,81 +1362,80 @@ downloadButton.addEventListener(
         );
 
 
-        /*
-            미리보기의 글자 크기와
-            Canvas 글자 크기를 비례시킨다.
-        */
-
         const previewWidth =
             previewArea.clientWidth;
 
 
-        const computedFontSize =
+        const previewFontSize =
             Number(
                 getComputedStyle(
                     previewText
-                ).fontSize.replace("px", "")
+                )
+                    .fontSize
+                    .replace(
+                        "px",
+                        ""
+                    )
             );
 
 
-        /*
-            previewWidth가 0인 경우를 방지
-        */
-
         const scale =
             previewWidth > 0
-                ? canvasWidth / previewWidth
+                ? canvasWidth /
+                    previewWidth
                 : 1;
 
 
         const canvasFontSize =
-            computedFontSize * scale;
+            previewFontSize *
+            scale;
 
 
         ctx.font =
             `bold ${canvasFontSize}px Arial, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif`;
 
+
         ctx.fillStyle =
             textColor.value;
 
+
         ctx.textAlign =
             "center";
+
 
         ctx.textBaseline =
             "middle";
 
 
-        /*
-            그림자
-        */
-
         ctx.shadowColor =
             "rgba(0, 0, 0, 0.8)";
+
 
         ctx.shadowBlur =
             4;
 
+
         ctx.shadowOffsetX =
             2;
+
 
         ctx.shadowOffsetY =
             2;
 
-
-        /*
-            문구
-        */
 
         const text =
             textInput.value;
 
 
         /*
-            빈 문구라면
-            이미지 자체만 저장한다.
+            빈 문구면
+            이미지 자체만 저장
         */
 
-        if (text.trim() === "") {
+        if (
+            text.trim() ===
+            ""
+        ) {
 
             saveCanvasAsPNG(
                 canvas
@@ -575,18 +1446,9 @@ downloadButton.addEventListener(
         }
 
 
-        /*
-            최대 문구 폭
-        */
-
         const maxWidth =
             canvasWidth * 0.9;
 
-
-        /*
-            긴 문장 / 줄바꿈 / 한글 /
-            영문 / 이모지를 처리한다.
-        */
 
         const lines =
             wrapText(
@@ -596,58 +1458,61 @@ downloadButton.addEventListener(
             );
 
 
-        /*
-            줄 높이
-        */
-
         const lineHeight =
-            canvasFontSize * 1.2;
+            canvasFontSize *
+            1.2;
 
 
         const totalHeight =
-            lines.length * lineHeight;
+            lines.length *
+            lineHeight;
 
-
-        /*
-            문구 Y 위치
-        */
 
         let startY;
 
 
-        if (currentPosition === "top") {
-
-            startY =
-                canvasHeight * 0.08;
-
-        } else if (
-            currentPosition === "center"
+        if (
+            currentPosition ===
+            "top"
         ) {
 
             startY =
-                canvasHeight / 2 -
-                totalHeight / 2;
+                canvasHeight *
+                0.08;
+
+        } else if (
+            currentPosition ===
+            "center"
+        ) {
+
+            startY =
+                canvasHeight /
+                    2 -
+                totalHeight /
+                    2;
 
         } else {
 
             startY =
-                canvasHeight * 0.92 -
+                canvasHeight *
+                    0.92 -
                 totalHeight;
 
         }
 
 
-        /*
-            문구 그리기
-        */
-
         lines.forEach(
-            function (line, index) {
+            function (
+                line,
+                index
+            ) {
 
                 const y =
                     startY +
-                    index * lineHeight +
-                    lineHeight / 2;
+                    index *
+                        lineHeight +
+                    lineHeight /
+                        2;
 
 
                 ctx.fillText(
@@ -660,10 +1525,6 @@ downloadButton.addEventListener(
         );
 
 
-        /*
-            PNG 저장
-        */
-
         saveCanvasAsPNG(
             canvas
         );
@@ -673,10 +1534,14 @@ downloadButton.addEventListener(
 
 
 /*
-    Canvas PNG 저장 함수
+    ================================
+    Canvas PNG 저장
+    ================================
 */
 
-function saveCanvasAsPNG(canvas) {
+function saveCanvasAsPNG(
+    canvas
+) {
 
     canvas.toBlob(
         function (blob) {
@@ -692,11 +1557,15 @@ function saveCanvasAsPNG(canvas) {
 
 
             const url =
-                URL.createObjectURL(blob);
+                URL.createObjectURL(
+                    blob
+                );
 
 
             const link =
-                document.createElement("a");
+                document.createElement(
+                    "a"
+                );
 
 
             link.href =
@@ -704,7 +1573,10 @@ function saveCanvasAsPNG(canvas) {
 
 
             link.download =
-                `card-${currentRatio.replace(":", "x")}.png`;
+                `card-${currentRatio.replace(
+                    ":",
+                    "x"
+                )}.png`;
 
 
             document.body.appendChild(
@@ -717,11 +1589,6 @@ function saveCanvasAsPNG(canvas) {
 
             link.remove();
 
-
-            /*
-                다운로드가 시작된 후
-                Object URL을 정리한다.
-            */
 
             setTimeout(
                 function () {
@@ -746,7 +1613,9 @@ function saveCanvasAsPNG(canvas) {
 
 
 /*
-    이미지 Cover 처리
+    ================================
+    이미지 Cover
+    ================================
 */
 
 function drawCoverImage(
@@ -757,10 +1626,13 @@ function drawCoverImage(
 ) {
 
     const imageRatio =
-        image.width / image.height;
+        image.width /
+        image.height;
+
 
     const canvasRatio =
-        canvasWidth / canvasHeight;
+        canvasWidth /
+        canvasHeight;
 
 
     let drawWidth;
@@ -770,41 +1642,50 @@ function drawCoverImage(
     let offsetY;
 
 
-    if (imageRatio > canvasRatio) {
-
-        /*
-            이미지가 더 넓음
-        */
+    if (
+        imageRatio >
+        canvasRatio
+    ) {
 
         drawHeight =
             canvasHeight;
 
+
         drawWidth =
-            drawHeight * imageRatio;
+            drawHeight *
+            imageRatio;
+
 
         offsetX =
-            (canvasWidth - drawWidth) / 2;
+            (
+                canvasWidth -
+                drawWidth
+            ) / 2;
+
 
         offsetY =
             0;
 
     } else {
 
-        /*
-            이미지가 더 높음
-        */
-
         drawWidth =
             canvasWidth;
 
+
         drawHeight =
-            drawWidth / imageRatio;
+            drawWidth /
+            imageRatio;
+
 
         offsetX =
             0;
 
+
         offsetY =
-            (canvasHeight - drawHeight) / 2;
+            (
+                canvasHeight -
+                drawHeight
+            ) / 2;
 
     }
 
@@ -821,18 +1702,9 @@ function drawCoverImage(
 
 
 /*
+    ================================
     문구 줄바꿈
     ================================
-
-    처리하는 입력
-
-    1. 긴 한글
-    2. 긴 영문
-    3. 한글 + 영문
-    4. 직접 입력한 줄바꿈
-    5. 이모지
-    6. 공백 없는 긴 문자열
-    7. 빈 줄
 */
 
 function wrapText(
@@ -840,10 +1712,6 @@ function wrapText(
     text,
     maxWidth
 ) {
-
-    /*
-        빈 문자열
-    */
 
     if (!text) {
 
@@ -853,46 +1721,55 @@ function wrapText(
 
 
     /*
-        실제 사용자가 입력한
-        줄바꿈을 먼저 유지한다.
+        사용자가 입력한 줄바꿈 유지
     */
 
     const paragraphs =
-        text.split(/\r?\n/);
+        text.split(
+            /\r?\n/
+        );
 
 
     const lines = [];
 
 
     paragraphs.forEach(
-        function (paragraph) {
+        function (
+            paragraph
+        ) {
 
             /*
-                빈 줄 유지
+                빈 줄도 유지
             */
 
-            if (paragraph === "") {
+            if (
+                paragraph ===
+                ""
+            ) {
 
-                lines.push("");
+                lines.push(
+                    ""
+                );
 
                 return;
 
             }
 
 
-            /*
-                일반적인 공백 기준 분리
-            */
-
             const words =
-                paragraph.split(/\s+/);
+                paragraph.split(
+                    /\s+/
+                );
 
 
-            let currentLine = "";
+            let currentLine =
+                "";
 
 
             words.forEach(
-                function (word) {
+                function (
+                    word
+                ) {
 
                     if (!word) {
                         return;
@@ -901,27 +1778,22 @@ function wrapText(
 
                     const testLine =
                         currentLine
-                            ? currentLine + " " + word
+                            ? currentLine +
+                                " " +
+                                word
                             : word;
 
-
-                    /*
-                        현재 줄이
-                        최대 폭을 넘는 경우
-                    */
 
                     if (
                         ctx.measureText(
                             testLine
-                        ).width > maxWidth
+                        ).width >
+                            maxWidth
                     ) {
 
-                        /*
-                            현재 줄에 내용이 있으면
-                            먼저 저장한다.
-                        */
-
-                        if (currentLine) {
+                        if (
+                            currentLine
+                        ) {
 
                             lines.push(
                                 currentLine
@@ -934,14 +1806,15 @@ function wrapText(
 
 
                         /*
-                            단어 자체가 너무 긴 경우
-                            글자 단위로 다시 나눈다.
+                            단어 하나가
+                            너무 긴 경우
                         */
 
                         if (
                             ctx.measureText(
                                 word
-                            ).width > maxWidth
+                            ).width >
+                                maxWidth
                         ) {
 
                             const splitLines =
@@ -952,15 +1825,11 @@ function wrapText(
                                 );
 
 
-                            /*
-                                마지막 조각은
-                                다음 단어와 이어질 수 있도록
-                                currentLine에 둔다.
-                            */
-
                             for (
                                 let i = 0;
-                                i < splitLines.length - 1;
+                                i <
+                                splitLines.length -
+                                    1;
                                 i++
                             ) {
 
@@ -973,7 +1842,8 @@ function wrapText(
 
                             currentLine =
                                 splitLines[
-                                    splitLines.length - 1
+                                    splitLines.length -
+                                        1
                                 ];
 
                         } else {
@@ -994,11 +1864,9 @@ function wrapText(
             );
 
 
-            /*
-                마지막 줄 저장
-            */
-
-            if (currentLine) {
+            if (
+                currentLine
+            ) {
 
                 lines.push(
                     currentLine
@@ -1010,10 +1878,6 @@ function wrapText(
     );
 
 
-    /*
-        아무것도 생성되지 않은 경우
-    */
-
     return lines.length
         ? lines
         : [""];
@@ -1021,8 +1885,9 @@ function wrapText(
 
 
 /*
-    공백 없는 긴 문자열을
-    글자 단위로 분리
+    ================================
+    긴 문자열 분리
+    ================================
 */
 
 function splitLongText(
@@ -1033,21 +1898,20 @@ function splitLongText(
 
     const lines = [];
 
-    let currentLine = "";
+    let currentLine =
+        "";
 
-
-    /*
-        Array.from을 사용하여
-        이모지 같은 유니코드 문자도
-        가능한 한 하나의 단위로 처리한다.
-    */
 
     const characters =
-        Array.from(text);
+        Array.from(
+            text
+        );
 
 
     characters.forEach(
-        function (character) {
+        function (
+            character
+        ) {
 
             const testLine =
                 currentLine +
@@ -1057,13 +1921,15 @@ function splitLongText(
             if (
                 ctx.measureText(
                     testLine
-                ).width > maxWidth &&
+                ).width >
+                    maxWidth &&
                 currentLine
             ) {
 
                 lines.push(
                     currentLine
                 );
+
 
                 currentLine =
                     character;
@@ -1079,7 +1945,9 @@ function splitLongText(
     );
 
 
-    if (currentLine) {
+    if (
+        currentLine
+    ) {
 
         lines.push(
             currentLine
@@ -1095,7 +1963,9 @@ function splitLongText(
 
 
 /*
+    ================================
     초기화
+    ================================
 */
 
 resetButton.addEventListener(
@@ -1130,9 +2000,14 @@ resetButton.addEventListener(
             "#ffffff";
 
 
-        setPosition("bottom");
+        setPosition(
+            "bottom"
+        );
 
-        setRatio("1:1");
+
+        setRatio(
+            "1:1"
+        );
 
 
         fileMessage.textContent =
