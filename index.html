@@ -1,75 +1,227 @@
-<!-- 템플릿 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini Card Studio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-<div class="template-box">
+<body>
 
-    <h2>
-        📁 템플릿 관리
-    </h2>
+  <header>
+    <h1>Mini Card Studio</h1>
+    <p>간단한 이미지 카드 제작 도구</p>
+  </header>
 
+  <main class="container">
 
-    <input
-        type="text"
-        id="templateName"
-        class="template-name-input"
-        maxlength="30"
-        placeholder="템플릿 이름"
-    >
+    <!-- =========================
+         편집 영역
+    ========================== -->
+    <section class="editor">
 
+      <h2>카드 편집</h2>
 
-    <button
-        type="button"
-        id="saveTemplateButton"
-        class="template-save-button">
+      <!-- 이미지 -->
+      <div class="control-group">
+        <label for="imageInput">이미지 업로드</label>
+        <input
+          type="file"
+          id="imageInput"
+          accept="image/png,image/jpeg"
+        >
+      </div>
 
-        💾 새 템플릿 저장
+      <!-- 문구 -->
+      <div class="control-group">
+        <label for="textInput">문구</label>
+        <textarea
+          id="textInput"
+          maxlength="100"
+          placeholder="카드에 넣을 문구를 입력하세요."
+        ></textarea>
+      </div>
 
-    </button>
-
-
-    <p
-        id="templateMessage"
-        class="template-message">
-    </p>
-
-
-    <div
-        class="template-transfer">
-
-        <button
-            type="button"
-            id="exportTemplateButton">
-
-            📤 JSON 내보내기
-
-        </button>
-
-
-        <label
-            for="importTemplateInput"
-            class="template-import-button">
-
-            📥 JSON 가져오기
-
+      <!-- 글자 크기 -->
+      <div class="control-group">
+        <label for="fontSize">
+          글자 크기
+          <span id="fontSizeValue">40</span>px
         </label>
 
-
         <input
-            type="file"
-            id="importTemplateInput"
-            accept=".json,application/json"
+          type="range"
+          id="fontSize"
+          min="12"
+          max="100"
+          value="40"
+        >
+      </div>
+
+      <!-- 글자 색상 -->
+      <div class="control-group">
+        <label for="textColor">글자 색상</label>
+        <input
+          type="color"
+          id="textColor"
+          value="#ffffff"
+        >
+      </div>
+
+      <!-- 위치 -->
+      <div class="control-group">
+        <label>문구 위치</label>
+
+        <div class="position-buttons">
+          <button type="button" data-position="top">상단</button>
+          <button type="button" data-position="center">중앙</button>
+          <button type="button" data-position="bottom">하단</button>
+        </div>
+      </div>
+
+      <!-- 비율 -->
+      <div class="control-group">
+        <label>카드 비율</label>
+
+        <div class="ratio-buttons">
+          <button type="button" class="ratio-button" data-ratio="1:1">
+            1:1
+          </button>
+
+          <button type="button" class="ratio-button" data-ratio="4:5">
+            4:5
+          </button>
+
+          <button type="button" class="ratio-button" data-ratio="9:16">
+            9:16
+          </button>
+        </div>
+      </div>
+
+      <!-- 기본 기능 버튼 -->
+      <div class="editor-buttons">
+        <button type="button" id="downloadButton">
+          PNG 저장
+        </button>
+
+        <button type="button" id="resetButton">
+          초기화
+        </button>
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         미리보기 영역
+    ========================== -->
+    <section class="preview-section">
+
+      <h2>미리보기</h2>
+
+      <div
+        id="preview"
+        class="preview ratio-1-1"
+      >
+
+        <img
+          id="previewImage"
+          src=""
+          alt="미리보기 이미지"
         >
 
-    </div>
+        <div id="emptyMessage">
+          이미지를 업로드하세요.
+        </div>
+
+        <div id="previewText"></div>
+
+      </div>
+
+    </section>
 
 
-    <div
-        id="templateList"
-        class="template-list">
+    <!-- =========================
+         템플릿 관리
+    ========================== -->
+    <section class="template-box">
+
+      <h2>📁 템플릿 관리</h2>
+
+      <div class="template-save-area">
+
+        <input
+          type="text"
+          id="templateName"
+          class="template-name-input"
+          placeholder="템플릿 이름을 입력하세요"
+          maxlength="30"
+        >
+
+        <button
+          type="button"
+          id="saveTemplateButton"
+          class="template-save-button"
+        >
+          💾 새 템플릿 저장
+        </button>
+
+      </div>
+
+
+      <!-- JSON -->
+      <div class="template-transfer">
+
+        <button
+          type="button"
+          id="exportTemplateButton"
+        >
+          📤 JSON 내보내기
+        </button>
+
+        <label
+          for="importTemplateInput"
+          class="template-import-button"
+        >
+          📥 JSON 가져오기
+        </label>
+
+        <input
+          type="file"
+          id="importTemplateInput"
+          accept=".json,application/json"
+        >
+
+      </div>
+
+
+      <p
+        id="templateMessage"
+        class="template-message"
+      ></p>
+
+
+      <!-- 템플릿 목록 -->
+      <div id="templateList" class="template-list">
 
         <p class="template-empty">
-            저장된 템플릿이 없습니다.
+          저장된 템플릿이 없습니다.
         </p>
 
-    </div>
+      </div>
 
-</div>
+    </section>
+
+  </main>
+
+
+  <footer>
+    <p>Mini Card Studio</p>
+  </footer>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
